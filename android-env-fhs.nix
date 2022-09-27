@@ -1,10 +1,13 @@
 { pkgs ? import <nixpkgs> {} }:
+
+with import <nixpkgs> {};
  
 let fhs = pkgs.buildFHSUserEnv {
   name = "android-env";
   targetPkgs = pkgs: with pkgs;
     [ git
       gitRepo
+      bc
       gnupg
       python2
       curl
@@ -27,10 +30,12 @@ let fhs = pkgs.buildFHSUserEnv {
       lzop
       python3
       android-tools
+      openssl_3
     ];
   multiPkgs = pkgs: with pkgs;
     [ zlib
       ncurses5
+      openssl_3
     ];
   runScript = "bash";
   profile = ''
@@ -44,6 +49,7 @@ let fhs = pkgs.buildFHSUserEnv {
 in pkgs.stdenv.mkDerivation {
   name = "android-env-shell";
   nativeBuildInputs = [ fhs ];
+  buildInputs = [ pkg-config openssl ];
   shellHook = "exec android-env";
 
 }
